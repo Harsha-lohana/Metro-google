@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One City, One Journey</title>
+<style>
+:root{--bg:#14161c;--panel:#1c1f27;--line:#2c303b;--ink:#eceef3;--mute:#9399a8;
+--metro:#ff6a3d;--brts:#34d399;--amts:#5aa9ff;--walk:#9399a8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+h1{font:700 1.7rem/1.15 Georgia,"Times New Roman",serif;margin:0}
+.sub{color:var(--mute);margin:4px 0 0;font-size:.9rem}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.8rem;background:var(--panel)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--brts)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.pair{grid-template-columns:1fr}}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{font-weight:600;margin-bottom:8px;padding:0}
+label{display:block;font-size:.8rem;color:var(--mute);margin:8px 0 4px}
+select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#12141a;color:var(--ink);font:inherit}
+select:disabled{opacity:.5}
+select:focus-visible,button:focus-visible{outline:2px solid var(--amts);outline-offset:2px}
+button{width:100%;margin-top:16px;padding:12px;border:0;border-radius:8px;background:var(--metro);color:#1a0d08;font:700 1rem inherit;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.samp{width:auto;margin:6px 6px 0 0;padding:6px 10px;background:#12141a;color:var(--ink);border:1px solid var(--line);font:.8rem inherit;font-weight:400}
+.err{color:#ff8a8a;margin:12px 0 0}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:left}
+.sum b{display:block;font:700 2rem/1.1 Georgia,serif}
+.sum span{color:var(--mute);font-size:.8rem}
+.sum .fare b{color:var(--metro);font-size:2.6rem}
+.note{color:var(--mute);font-size:.82rem;margin:10px 0 0}
+.route{position:relative;margin:0 0 16px;padding:0;list-style:none}
+.leg{position:relative;padding:0 0 18px 34px}
+.leg::before{content:"";position:absolute;left:9px;top:6px;bottom:-6px;width:4px;border-radius:2px;background:var(--c)}
+.leg.walk::before{background:repeating-linear-gradient(var(--walk) 0 4px,transparent 4px 9px)}
+.leg:last-child::before{display:none}
+.leg::after{content:"";position:absolute;left:3px;top:4px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:4px solid var(--c)}
+.leg .body{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:10px;padding:12px 14px}
+.leg h3{margin:0 0 2px;font-size:1rem}
+.leg p{margin:2px 0;color:var(--mute);font-size:.9rem}
+.row{display:flex;justify-content:space-between;gap:8px}
+.chip{font-weight:700;white-space:nowrap}
+.bar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin:10px 0}
+.bar div{display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#10131a;min-width:0}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+td,th{padding:6px 4px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:600}
+td:last-child,th:last-child{text-align:right}
+code{display:block;background:#12141a;border:1px solid var(--line);border-radius:8px;padding:10px;font:.8rem/1.5 Consolas,monospace;color:var(--ink);margin-top:10px;white-space:normal}
+h2{font-size:1.05rem;margin:0 0 4px}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:no-preference){ #result:not([hidden]){animation:in .25s ease-out}}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>One City, One Journey</h1>
+    <p class="sub">Metro, BRTS and AMTS in a single plan, one fare.</p>
+  </div>
+  <span class="badge" id="offline"><i class="dot"></i>Live · data served from local JSON</span>
+</header>
+
+<section class="card">
+  <div class="pair">
+    <fieldset>
+      <legend>From</legend>
+      <label for="oMode">Transit mode</label>
+      <select id="oMode"></select>
+      <label for="oStop">Station or stop</label>
+      <select id="oStop" disabled></select>
+    </fieldset>
+    <fieldset>
+      <legend>To</legend>
+      <label for="dMode">Transit mode</label>
+      <select id="dMode"></select>
+      <label for="dStop">Station or stop</label>
+      <select id="dStop" disabled></select>
+    </fieldset>
+  </div>
+  <button id="go" disabled>Plan journey</button>
+  <p class="err" id="err" role="alert" hidden></p>
+  <p class="note">Sample trips in the demo data:</p>
+  <div id="samples"></div>
+</section>
+
+<div id="result" hidden>
+  <section class="card">
+    <div class="sum">
+      <div class="fare"><b id="sFare"></b><span>One ticket fare</span></div>
+      <div><b id="sTime"></b><span>Total travel time</span></div>
+      <div><b id="sXfer"></b><span id="sXferL">Transfers</span></div>
+    </div>
+    <p class="note" id="sNote"></p>
+  </section>
+  <ol class="route" id="legs"></ol>
+  <section class="card">
+    <h2>Fare split between operators</h2>
+    <div class="bar" id="bar" role="img"></div>
+    <table><thead><tr><th>Operator</th><th>Share</th><th>Payout</th></tr></thead><tbody id="splitRows"></tbody></table>
+    <code id="formula"></code>
+    <code id="worked"></code>
+  </section>
+</div>
+</main>
+
+<script>
+const COLORS={Metro:"var(--metro)",BRTS:"var(--brts)",AMTS:"var(--amts)"};
+const $=id=>document.getElementById(id);
+const inr=n=>"₹"+(Math.round(n*100)/100).toString();
+let STOPS={},TRIPS=[];
+
+function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}
+function fill(sel,items,ph){sel.replaceChildren(new Option(ph,""));items.forEach(i=>sel.add(new Option(i.label||i.name,i.value||i.id)))}
+function setStops(modeSel,stopSel){
+  const list=STOPS[modeSel.value]||[];
+  fill(stopSel,list,modeSel.value?"Select a stop":"Choose a mode first");
+  stopSel.disabled=!modeSel.value;check();
+}
+function check(){$("go").disabled=!($("oStop").value&&$("dStop").value)}
+function showErr(m){$("err").textContent=m;$("err").hidden=!m}
+
+async function init(){
+  try{const D=await (await fetch("/api/stops")).json();STOPS=D.stops;TRIPS=D.trips}catch(e){showErr("Could not load stops. Is app.py running?");return}
+  const modes=Object.keys(STOPS).map(m=>({value:m,label:m}));
+  ["oMode","dMode"].forEach(id=>fill($(id),modes,"Select a mode"));
+  $("oMode").onchange=()=>setStops($("oMode"),$("oStop"));
+  $("dMode").onchange=()=>setStops($("dMode"),$("dStop"));
+  $("oStop").onchange=$("dStop").onchange=check;
+  setStops($("oMode"),$("oStop"));setStops($("dMode"),$("dStop"));
+  const box=$("samples");
+  TRIPS.forEach(t=>{const b=el("button","samp",`${t.from_stop} → ${t.to_stop}`);
+    b.onclick=()=>{$("oMode").value=t.from_mode;setStops($("oMode"),$("oStop"));$("oStop").value=t.from_stop;
+      $("dMode").value=t.to_mode;setStops($("dMode"),$("dStop"));$("dStop").value=t.to_stop;check();$("go").click()};
+    box.append(b)});
+}
+
+$("go").onclick=async()=>{
+  showErr("");$("go").disabled=true;
+  try{
+    const r=await fetch("/api/plan-trip",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({origin:$("oStop").value,destination:$("dStop").value})});
+    const d=await r.json();
+    if(!r.ok){showErr(d.error||"Something went wrong.");$("result").hidden=true}else render(d);
+  }catch(e){showErr("Planner not reachable on localhost. Check that app.py is running.")}
+  check();
+};
+
+function render(d){
+  const s=d.summary;
+  $("sFare").textContent=inr(s.total_fare);
+  $("sTime").textContent=s.total_minutes+" min";
+  $("sXfer").textContent=s.transfers;
+  $("sXferL").textContent=s.transfers===1?"Transfer":"Transfers";
+  $("sNote").textContent=`Includes ${s.walk_minutes} min of transfer walking (${s.walk_meters} m). Walking is free; one fare covers the whole trip.`;
+  const ol=$("legs");ol.replaceChildren();
+  let n=0;
+  d.legs.forEach(l=>{
+    const li=el("li","leg "+(l.type==="walk"?"walk":""));
+    li.style.setProperty("--c",l.type==="walk"?"var(--walk)":COLORS[l.mode]);
+    const b=el("div","body");
+    if(l.type==="ride"){
+      n++;
+      const top=el("div","row");
+      top.append(el("h3","",`Leg ${n}: ${l.route}`),el("span","chip",inr(l.fare)));
+      b.append(top,
+        el("p","",l.details),
+        el("p","",`${l.ride_min} min on board`),
+        el("p","",`${l.operator}`));
+    }else{
+      const top=el("div","row");
+      top.append(el("h3","","Transfer walk"),el("span","chip",l.minutes+" min"));
+      b.append(top,
+        el("p","",l.details),
+        el("p","",`${l.meters} m on foot`));
+    }
+    li.append(b);ol.append(li);
+  });
+  const bar=$("bar");bar.replaceChildren();
+  const body=$("splitRows");body.replaceChildren();
+  d.split.operators.forEach(o=>{
+    const seg=el("div","",o.share_pct+"%");
+    seg.style.cssText=`width:${o.share_pct}%;background:${COLORS[o.mode]}`;
+    seg.title=`${o.mode} ${o.share_pct}%`;bar.append(seg);
+    const tr=el("tr");
+    tr.append(el("td","",`${o.mode}: ${o.operator}`),el("td","",o.share_pct+"%"),el("td","",inr(o.payout)));
+    body.append(tr);
+  });
+  bar.setAttribute("aria-label",d.split.operators.map(o=>`${o.mode} ${o.share_pct}%`).join(", "));
+  $("formula").textContent=d.split.formula;
+  $("worked").textContent=s.gross_fare
+    ? "Worked example: "+d.split.operators.map(o=>`${o.mode} ${inr(o.standalone)}`).join(" + ")+` = ${inr(s.gross_fare)}. `+
+      d.split.operators.map(o=>`${o.mode} share = ${inr(o.standalone)} ÷ ${inr(s.gross_fare)} = ${o.share_pct}%`).join("; ")+"."
+    : "No fare-paying leg on this trip.";
+  $("result").hidden=false;
+  $("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function net(){const on=navigator.onLine;$("offline").lastChild.textContent=
+  on?" Live · data served from local JSON":" Offline · running fully on-device"}
+addEventListener("online",net);addEventListener("offline",net);
+init();
+</script>
+</body>
+</html>
