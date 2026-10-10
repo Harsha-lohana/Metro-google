@@ -1,0 +1,33 @@
+{"modes_and_stops":{"Metro":["Mahatma Mandir","Sector 1","GNLU","Motera Stadium","Sabarmati","APMC"],
+"BRTS":["Sabarmati Railway Station BRTS","APMC BRTS Hub","Visat Circle BRTS","Anjali Cross Road","RTO Circle","Ranip Cross Road BRTS","Shivranjani Cross Road"],
+"AMTS":["Kalupur Railway Station AMTS","Lal Darwaja","Gandhinagar Central Depot","New Sachivalaya","Paldi AMTS Terminus","Vadaj Terminus"]},
+"trip_mappings":[
+{"from_mode":"Metro","from_stop":"Mahatma Mandir","to_mode":"AMTS","to_stop":"Kalupur Railway Station AMTS","legs":[
+{"type":"Metro","details":"Mahatma Mandir to Sabarmati Metro","duration":"28 mins","fare":30},
+{"type":"Transfer Walk","details":"Exit via Gate 2, walk 180m to Sabarmati BRTS/AMTS link","duration":"3 mins","fare":0},
+{"type":"AMTS","details":"Bus Route 130 to Kalupur Railway Station","duration":"15 mins","fare":12}],
+"total_fare":42,"total_time":"46 mins","fare_split":{"metro_share":"71.4%","amts_share":"28.6%"}},
+{"from_mode":"Metro","from_stop":"GNLU","to_mode":"BRTS","to_stop":"Anjali Cross Road","legs":[
+{"type":"Metro","details":"GNLU to APMC Metro Station","duration":"35 mins","fare":35},
+{"type":"Transfer Walk","details":"Exit via Gate 1, walk 200m to APMC BRTS Hub","duration":"4 mins","fare":0},
+{"type":"BRTS","details":"BRTS Line 4 towards Anjali Cross Road","duration":"8 mins","fare":10}],
+"total_fare":45,"total_time":"47 mins","fare_split":{"metro_share":"77.8%","brts_share":"22.2%"}},
+{"from_mode":"Metro","from_stop":"Sector 1","to_mode":"BRTS","to_stop":"Visat Circle BRTS","legs":[
+{"type":"Metro","details":"Sector 1 to Motera Stadium Metro Station","duration":"20 mins","fare":20},
+{"type":"Transfer Walk","details":"Exit Gate 2, walk 250m to Visat Feeder Link","duration":"4 mins","fare":0},
+{"type":"BRTS","details":"BRTS Corridor towards Visat Circle","duration":"6 mins","fare":10}],
+"total_fare":30,"total_time":"30 mins","fare_split":{"metro_share":"66.7%","brts_share":"33.3%"}},
+{"from_mode":"Metro","from_stop":"Motera Stadium","to_mode":"AMTS","to_stop":"Lal Darwaja","legs":[
+{"type":"Metro","details":"Motera Stadium to Vadaj Metro Station","duration":"10 mins","fare":15},
+{"type":"Transfer Walk","details":"Exit Gate 1, walk 140m to Vadaj AMTS Terminus","duration":"2 mins","fare":0},
+{"type":"AMTS","details":"AMTS Route 63/1 direct to Lal Darwaja Terminus","duration":"16 mins","fare":10}],
+"total_fare":25,"total_time":"28 mins","fare_split":{"metro_share":"60.0%","amts_share":"40.0%"}},
+{"from_mode":"Metro","from_stop":"APMC","to_mode":"BRTS","to_stop":"RTO Circle","legs":[
+{"type":"Transfer Walk","details":"Exit Gate 1, walk 150m to APMC BRTS Station","duration":"2 mins","fare":0},
+{"type":"BRTS","details":"BRTS Line 1 via 132 Feet Ring Road to RTO Circle","duration":"32 mins","fare":20}],
+"total_fare":20,"total_time":"34 mins","fare_split":{"metro_share":"0.0%","brts_share":"100.0%"}},
+{"from_mode":"Metro","from_stop":"Sabarmati","to_mode":"AMTS","to_stop":"New Sachivalaya","legs":[
+{"type":"Metro","details":"Sabarmati to Sector 1 Metro Station","duration":"22 mins","fare":25},
+{"type":"Transfer Walk","details":"Exit Gate 2, walk 200m to CH-Road feeder bay","duration":"3 mins","fare":0},
+{"type":"AMTS","details":"Gandhinagar Feeder Route 8 to New Sachivalaya","duration":"12 mins","fare":10}],
+"total_fare":35,"total_time":"37 mins","fare_split":{"metro_share":"71.4%","amts_share":"28.6%"}}]}
